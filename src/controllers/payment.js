@@ -2,7 +2,7 @@ const axios = require('axios').default;
 const config = require('config');
 const paytmChecksum = require('paytmchecksum');
 const { PubSub } = require('@google-cloud/pubsub');
-const connection = require('../services/database');
+const pool = require('../services/database');
 const moment = require('moment');
 const { logger } = require('../api/middlewares/logger');
 
@@ -107,7 +107,7 @@ const savePaymentInfo = (data) => {
     const sql = 'INSERT INTO payment_history SET ?';
 
     return new Promise((resolve, reject) => {
-        connection.query(sql, values, (err, response) => {
+        pool.query(sql, values, (err, response) => {
             if (err) {
                 logger.error(err, "Database error !");
                 reject(err);
