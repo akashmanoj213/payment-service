@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const {logger} = require('../api/middlewares/logger')
 
 // Database Connection for Development
 
@@ -9,12 +10,14 @@ let connection = mysql.createConnection({
   password: process.env.DB_PASS
 });
 
+logger.info("DB_HOST", process.env.DB_HOST);
+
   connection.connect(function(err) {
     if (err) {
-      console.error('Error connecting: ' + err.stack);
+        logger.error(err, 'Error connecting: ' + err.stack);
       throw err;
     }
-    console.log('Connected as thread id: ' + connection.threadId);
+    logger.info('Connected as thread id: ' + connection.threadId);
   });
 
   module.exports = connection;
