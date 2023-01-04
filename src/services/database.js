@@ -1,4 +1,4 @@
-const mysql = require('promise-mysql');
+const mysql = require('mysql');
 const {logger} = require('../api/middlewares/logger');
 
 // Database Connection for Development
@@ -29,4 +29,4 @@ let pool = mysql.createPool({
     socketPath: process.env.INSTANCE_UNIX_SOCKET // e.g. '/cloudsql/project:region:instance'
   });
 
-  module.exports = pool;
+module.exports = pool;
