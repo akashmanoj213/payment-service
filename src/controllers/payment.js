@@ -3,6 +3,8 @@ const config = require('config');
 const paytmChecksum = require('paytmchecksum');
 const { PubSub } = require('@google-cloud/pubsub');
 const { queryData } = require('../services/database');
+const { createTables } = require('../services/new-database');
+
 const moment = require('moment');
 const { logger } = require('../api/middlewares/logger');
 
@@ -121,8 +123,20 @@ const checkSum = async (body, key) => {
     return await paytmChecksum.generateSignature(requestBody, key);
 }
 
+const testDb = async () => {
+    try {
+        console.log("inside controller")
+        await createTables();
+        logger.info('Connection has been established successfully.');
+    } catch (err) {
+        logger.error(err, 'Unable to connect to the database.');
+        throw err;
+    }
+}
+
 module.exports = {
     inititateTransaction,
     publishMessage,
-    savePaymentInfo
+    savePaymentInfo,
+    testDb
 }

@@ -1,6 +1,6 @@
 const express = require('express');
 const { success, error } = require('./util');
-const { inititateTransaction, publishMessage, savePaymentInfo } = require("../../controllers/payment");
+const { inititateTransaction, publishMessage, savePaymentInfo, testDb } = require("../../controllers/payment");
 
 const router = express.Router();
 
@@ -48,5 +48,15 @@ router.post('/consumer', async (req, res) => {
         return res.status(500).json(error(res.statusCode, err.message));
     }
 });
+
+router.post('/test', async (req, res) => {
+    try {
+        await testDb();
+        res.status(200).json(success(res.statusCode, "DB successfull"));
+    } catch (err) {
+        req.log.error(err, 'Error occured in /test :');
+        return res.status(500).json(error(res.statusCode, err.message));
+    }
+})
 
 module.exports = router;
