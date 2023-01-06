@@ -53,8 +53,6 @@ for (const modelDefiner of modelDefiners) {
 	modelDefiner(sequelize);
 }
 
-console.log(sequelize);
-
 const testConnection = async () => {
     try {
         await sequelize.authenticate();
