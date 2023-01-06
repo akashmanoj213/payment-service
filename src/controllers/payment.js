@@ -123,6 +123,5 @@ const checkSum = async (body, key) => {
 module.exports = {
     inititateTransaction,
     publishMessage,
-    savePaymentInfo,
-    testDb
+    savePaymentInfo
 }

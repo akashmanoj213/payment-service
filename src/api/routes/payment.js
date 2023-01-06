@@ -1,6 +1,6 @@
 const express = require('express');
 const { success, error } = require('./util');
-const { inititateTransaction, publishMessage, savePaymentInfo, testDb } = require("../../controllers/payment");
+const { inititateTransaction, publishMessage, savePaymentInfo } = require("../../controllers/payment");
 
 const router = express.Router();
 
