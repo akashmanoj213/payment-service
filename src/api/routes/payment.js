@@ -49,14 +49,4 @@ router.post('/consumer', async (req, res) => {
     }
 });
 
-router.post('/test', async (req, res) => {
-    try {
-        await testDb();
-        res.status(200).json(success(res.statusCode, "DB successfull"));
-    } catch (err) {
-        req.log.error(err, 'Error occured in /test :');
-        return res.status(500).json(error(res.statusCode, err.message));
-    }
-})
-
 module.exports = router;

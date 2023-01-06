@@ -59,6 +59,7 @@ const testConnection = async () => {
         logger.info('Connection has been established successfully.');
     } catch (err) {
         logger.error(err, 'Unable to connect to the database.');
+        throw err;
     }
 }
 
@@ -68,6 +69,7 @@ const createTables = async () => {
         logger.info('All tables were created successfully');
     } catch (err) {
         logger.error(err, 'Error occured while syncing database.');
+        throw err;
     }
 }
 
