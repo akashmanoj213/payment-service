@@ -3,7 +3,7 @@ const config = require('config');
 const paytmChecksum = require('paytmchecksum');
 const { PubSub } = require('@google-cloud/pubsub');
 const { queryData } = require('../services/database');
-const { createTables } = require('../services/new-database');
+const { models } = require('../services/database');
 
 const moment = require('moment');
 const { logger } = require('../api/middlewares/logger');
@@ -91,27 +91,25 @@ const publishMessage = async (body) => {
 
 const savePaymentInfo = async (data) => {
     try {
-        const { ORDERID: order_id, TXNID: transaction_id, TXNAMOUNT: transaction_amount, PAYMENTMODE: payment_mode, TXNDATETIME, STATUS: status, RESPMSG: response_message, GATEWAYNAME: gateway_name, BANKTXNID: bank_transaction_id, BANKNAME: bank_name } = data;
-        const transaction_date = moment(TXNDATETIME).format('YYYY-MM-DD HH:mm:ss');
+        const { ORDERID: orderId, TXNID: transactionId, TXNAMOUNT: transactionAmount, PAYMENTMODE: paymentMode, TXNDATETIME, STATUS: status, RESPMSG: responseMessage, GATEWAYNAME: gatewayName, BANKTXNID: bankTransactionId, BANKNAME: bankName } = data;
+        const transactionDate = moment(TXNDATETIME).format('YYYY-MM-DD HH:mm:ss');
 
         const values = {
-            order_id,
-            transaction_id,
-            transaction_amount,
-            payment_mode,
-            transaction_date,
+            orderId,
+            transactionId,
+            transactionAmount,
+            paymentMode,
+            transactionDate,
             status,
-            response_message,
-            gateway_name,
-            bank_transaction_id,
-            bank_name
+            responseMessage,
+            gatewayName,
+            bankTransactionId,
+            bankName
         };
 
-        const stmnt = 'INSERT INTO payment_history SET ?';
+        const response = await models.PaymentHistory.create(values);
 
-        const response = await queryData(stmnt, values);
-
-        logger.info({ response }, "Response from DB -");
+        logger.info("Data added successfully");
     } catch (err) {
         logger.error(err, "Error occured while saving payment to DB.");
         throw err;

@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== 'production') {
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
-const { testConnection } = require('./services/new-database');
+const { testConnection } = require('./services/database');
 
 // const app = require('./app');
 
@@ -20,6 +20,7 @@ async function startServer() {
     const { setMiddleWare } = require('./app');
     //Test db connection
     await testConnection();
+    
     const app = await setMiddleWare();
     const port = parseInt(process.env.PORT) || 8080;
     const server = http.createServer(app);
