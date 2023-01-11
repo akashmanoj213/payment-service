@@ -7,12 +7,12 @@ if (process.env.NODE_ENV !== 'production') {
 
 const app = require('./app');
 
-const { testConnection, createTables } = require('./services/database');
+const { testConnection, createTables } = require('./utils/database');
 //Test db connection
-await testConnection();
+ testConnection();
 
 //Initialise DB table - create tables if not present
-// await createTables();
+// createTables();
 
 const port = parseInt(process.env.PORT) || 8080;
 
