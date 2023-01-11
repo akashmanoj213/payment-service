@@ -1,5 +1,5 @@
 const mysql = require('promise-mysql');
-const {logger} = require('../api/middlewares/logger');
+const {logger} = require('../../utils/logger');
 
 // Database Connection for Development
 

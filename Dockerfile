@@ -12,3 +12,4 @@ ENV INSTANCE_UNIX_SOCKET="/cloudsql/pruinhlth-nprd-dev-scxlyx-7250:asia-south1:s
 ENV DB_NAME=payments
 ENV DB_USER=sahi-db-user
 ENV DB_PASS=qwerty
+ENV SERVICE_NAME=payment-service

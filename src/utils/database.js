@@ -1,5 +1,5 @@
 const { Sequelize } = require('sequelize');
-const { logger } = require('../api/middlewares/logger');
+const { logger } = require('./logger');
 
 const database = process.env.DB_NAME;
 const username = process.env.DB_USER;
@@ -32,8 +32,7 @@ const sequelize = new Sequelize(database, username, password, {
         ...config
     },
     pool: {
-        max: 5,
-
+        max: 5
     },
     logging: msg => logger.debug(msg),
     define: {

@@ -1,17 +1,15 @@
 const axios = require('axios').default;
 const config = require('config');
 const paytmChecksum = require('paytmchecksum');
-const { PubSub } = require('@google-cloud/pubsub');
-const { models } = require('../services/database');
+const { publishMessage } = require('../utils/clients/pubSubClient');
+const { models } = require('../utils/database');
 
 const moment = require('moment');
-const { logger } = require('../api/middlewares/logger');
+const { logger } = require('../utils/logger');
 
 const PAYTM_MERCHENT_KEY = config.get("paytmMerchantKey");
 const PAYTM_MERCHENT_ID = config.get("paytmMerchantId");
 const PAYMENT_TOPIC = config.get("paymentTopic");
-
-const pubSubClient = new PubSub();
 
 const inititateTransaction = async (orderId, amount, customerId, customerPhoneNumber = null) => {
     let userInfo = { custId: customerId };
@@ -70,20 +68,15 @@ const inititateTransaction = async (orderId, amount, customerId, customerPhoneNu
     }
 }
 
-const publishMessage = async (body) => {
+const pushMessage = async (body) => {
     try {
         logger.info("Publishing message...");
 
-        const data = JSON.stringify(body);
-        const dataBuffer = Buffer.from(data);
-        const messageId = await pubSubClient
-            .topic(PAYMENT_TOPIC)
-            .publishMessage({ data: dataBuffer });
-        logger.info(`Message ${messageId} published.`);
+        const messageId = await publishMessage(body, PAYMENT_TOPIC)
 
         return messageId;
     } catch (err) {
-        logger.error(err, "Received error while publishing.");
+        logger.error(err, "Error occured while publishing message!");
         throw err;
     }
 }
@@ -115,6 +108,19 @@ const savePaymentInfo = async (data) => {
     }
 }
 
+const testMessage = async (body) => {
+    try {
+        logger.info("Publishing message...");
+
+        const messageId = await publishMessage(body, PAYMENT_TOPIC)
+
+        return messageId;
+    } catch (err) {
+        logger.error(err, "Error occured while publishing message!");
+        throw err;
+    }
+}
+
 const checkSum = async (body, key) => {
     let requestBody = JSON.stringify(body);
     return await paytmChecksum.generateSignature(requestBody, key);
@@ -122,6 +128,7 @@ const checkSum = async (body, key) => {
 
 module.exports = {
     inititateTransaction,
-    publishMessage,
-    savePaymentInfo
+    pushMessage,
+    savePaymentInfo,
+    testMessage
 }

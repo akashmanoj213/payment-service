@@ -1,5 +1,6 @@
 {
     "paytmMerchantKey": "5ef@eqjzmYEnN6wh",
     "paytmMerchantId": "NaSqWx02851401972121",
-    "paymentTopic":"projects/excellent-zoo-370614/topics/payment-completion"
+    "paymentTopic":"projects/excellent-zoo-370614/topics/payment-completion",
+    "projectId":"excellent-zoo-370614"
 }

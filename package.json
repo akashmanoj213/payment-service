@@ -4,7 +4,7 @@
   "description": "Project with basic folder structure for all micro-services",
   "scripts": {
     "start": "node src/server.js",
-    "server": "nodemon src/server.js",
+    "server": "nodemon src/server.js | bunyan",
     "develop": "node src/server.js | bunyan"
   },
   "author": "",
