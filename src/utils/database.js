@@ -27,7 +27,8 @@ const config = {
 };
 
 const sequelize = new Sequelize(database, username, password, {
-    dialect: 'mysql',
+    dialect: 'postgres',
+    host: process.env.INSTANCE_UNIX_SOCKET,
     dialectOptions: {
         ...config
     },

@@ -7,9 +7,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 const app = require('./app');
 
-// const { testConnection, createTables } = require('./services/database');
+const { testConnection, createTables } = require('./services/database');
 //Test db connection
-// await testConnection();
+await testConnection();
 
 //Initialise DB table - create tables if not present
 // await createTables();

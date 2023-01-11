@@ -8,6 +8,10 @@ module.exports = sequelize => {
       allowNull: false,
       primaryKey: true
     },
+    customerId: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     transactionId: {
       type: DataTypes.STRING,
       allowNull: false,

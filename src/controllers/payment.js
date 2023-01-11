@@ -1,8 +1,8 @@
-const axios = require('axios').default;
 const config = require('config');
 const paytmChecksum = require('paytmchecksum');
 const { publishMessage } = require('../utils/clients/pubSubClient');
 const { models } = require('../utils/database');
+const { post } = require('../utils/clients/axiosClient');
 
 const moment = require('moment');
 const { logger } = require('../utils/logger');
@@ -49,7 +49,7 @@ const inititateTransaction = async (orderId, amount, customerId, customerPhoneNu
             }
         };
 
-        const result = await axios.post('https://securegw-stage.paytm.in/theia/api/v1/initiateTransaction', requestBody, {
+        const result = await post('https://securegw-stage.paytm.in/theia/api/v1/initiateTransaction', requestBody, {
             params: {
                 mid: PAYTM_MERCHENT_ID,
                 orderId
@@ -83,11 +83,12 @@ const pushMessage = async (body) => {
 
 const savePaymentInfo = async (data) => {
     try {
-        const { ORDERID: orderId, TXNID: transactionId, TXNAMOUNT: transactionAmount, PAYMENTMODE: paymentMode, TXNDATETIME, STATUS: status, RESPMSG: responseMessage, GATEWAYNAME: gatewayName, BANKTXNID: bankTransactionId, BANKNAME: bankName } = data;
+        const { ORDERID: orderId, CUSTID: customerId, TXNID: transactionId, TXNAMOUNT: transactionAmount, PAYMENTMODE: paymentMode, TXNDATETIME, STATUS: status, RESPMSG: responseMessage, GATEWAYNAME: gatewayName, BANKTXNID: bankTransactionId, BANKNAME: bankName } = data;
         const transactionDate = moment(TXNDATETIME).format('YYYY-MM-DD HH:mm:ss');
 
         const values = {
             orderId,
+            customerId,
             transactionId,
             transactionAmount,
             paymentMode,
