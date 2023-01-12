@@ -38,11 +38,11 @@ router.post('/consumer', async (req, res) => {
         }
 
         req.log.info({ body: req.body }, `Message consumed !`);
-        const { body: { message: { data } } } = req;
+        const { body: { message: { data, messageId } } } = req;
         const jsonObj = formatMessageData(data);
         const result = await savePaymentInfo(jsonObj);
 
-        res.status(200).json(success(res.statusCode, `MessageId: ${message.messageId} processed successfully`, result));
+        res.status(200).json(success(res.statusCode, `MessageId: ${messageId} processed successfully`, result));
     } catch (err) {
         req.log.error(err, 'Error occured in /consumer :');
         return res.status(500).json(error(res.statusCode, err.message));
