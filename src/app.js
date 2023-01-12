@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const paymentRoutes = require('./api/routes/payment');
-const traceLogger = require('./api/middlewares/traceLogger');
+const loggerMiddleware = require('./api/middlewares/loggerMiddleware');
 const errorHandler = require('./api/middlewares/errorHandler');
 
 const app = express();
 
 //Application Middlewares
-app.use(traceLogger);
+app.use(loggerMiddleware);
 
 app.use(express.json());
 app.use(cors());

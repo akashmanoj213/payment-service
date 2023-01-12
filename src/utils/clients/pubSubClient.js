@@ -36,16 +36,7 @@ const formatMessageData = (data) => {
     return jsonObj;
 }
 
-const retrieveTraceId = (body) => {
-    if (!body || !body.message) throw new Error("Invalid message format!");
-
-    const { message: { attributes } } = body;
-
-    if (!attributes || !attributes.traceId) throw new Error("traceId attribute not found!");
-}
-
 module.exports = {
     publishMessage,
-    retrieveTraceId,
     formatMessageData
 }
