@@ -3,28 +3,18 @@ const { DataTypes } = require('sequelize');
 module.exports = sequelize => {
   sequelize.define('PaymentHistory', {
     // Model attributes are defined here
-    orderId: {
+    transactionId: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true
     },
-    customerId: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    transactionId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
+    orderId: DataTypes.STRING,
+    customerId: DataTypes.STRING,
     transactionAmount: {
       type: DataTypes.FLOAT,
       allowNull: false
     },
-    paymentMode: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
+    paymentMode: DataTypes.STRING,
     transactionDate: {
       type: DataTypes.DATE,
       allowNull: false
@@ -38,11 +28,7 @@ module.exports = sequelize => {
       allowNull: false
     },
     gatewayName: DataTypes.STRING,
-    bankTransactionId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
+    bankTransactionId: DataTypes.STRING,
     bankName: DataTypes.STRING,
   }, {
     tableName: 'payment_history'

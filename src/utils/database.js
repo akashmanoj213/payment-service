@@ -65,7 +65,7 @@ const testConnection = async () => {
 
 const createTables = async () => {
     try {
-        await sequelize.sync();
+        await sequelize.sync(true);
         logger.info('All tables were created successfully');
     } catch (err) {
         logger.error(err, 'Error occured while syncing database.');
