@@ -59,9 +59,9 @@ const inititateTransaction = async (orderId, amount, customerId, customerPhoneNu
             }
         });
 
-        logger.info({ result: result.data }, "Result - ");
+        logger.info({ result }, "Result:");
 
-        return result.data;
+        return result;
     } catch (err) {
         logger.error(err, "Error occured while initiating transaction.");
         throw err;
