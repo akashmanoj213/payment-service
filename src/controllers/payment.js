@@ -6,6 +6,7 @@ const { post } = require('../utils/clients/axiosClient');
 
 const moment = require('moment');
 const { logger } = require('../utils/logger');
+const { savePaymentDetails } = require('../services/paymentService');
 
 const PAYTM_MERCHENT_KEY = config.get("paytmMerchantKey");
 const PAYTM_MERCHENT_ID = config.get("paytmMerchantId");
@@ -83,7 +84,8 @@ const pushMessage = async (body) => {
 
 const savePaymentInfo = async (data) => {
     try {
-        const { ORDERID: orderId, CUSTID: customerId, TXNID: transactionId, TXNAMOUNT: transactionAmount, PAYMENTMODE: paymentMode, TXNDATETIME, STATUS: status, RESPMSG: responseMessage, GATEWAYNAME: gatewayName, BANKTXNID: bankTransactionId, BANKNAME: bankName } = data;
+        const { ORDERID: orderId, CUSTID: customerId, TXNID: transactionId, TXNAMOUNT: transactionAmount, PAYMENTMODE: paymentMode, 
+            TXNDATETIME, STATUS: status, RESPMSG: responseMessage, GATEWAYNAME: gatewayName, BANKTXNID: bankTransactionId, BANKNAME: bankName } = data;
         const transactionDate = moment(TXNDATETIME).format('YYYY-MM-DD HH:mm:ss');
 
         const values = {
@@ -100,9 +102,9 @@ const savePaymentInfo = async (data) => {
             bankName
         };
 
-        const response = await models.PaymentHistory.create(values);
+        await savePaymentDetails(values);
 
-        logger.info("Data added successfully");
+        logger.info("Payment info saved successfully");
     } catch (err) {
         logger.error(err, "Error occured while saving payment to DB.");
         throw err;

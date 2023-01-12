@@ -1,6 +1,7 @@
 const express = require('express');
 const { success, error } = require('./util');
 const { inititateTransaction, pushMessage, savePaymentInfo, testMessage } = require("../../controllers/payment");
+const { formatMessageData } = require('../../utils/clients/pubSubClient')
 
 const router = express.Router();
 
@@ -31,15 +32,14 @@ router.post('/webhook', async (req, res) => {
 });
 
 router.post('/consumer', async (req, res) => {
-    req.log.info({ body: req.body }, `Message consumed !`);
-
     try {
-        const { body: { message } } = req;
+        if (!(req.body && req.body.message && req.body.message.data)) {
+            throw new Error("Malformed message received!");
+        }
 
-        const bufferObj = Buffer.from(message.data, "base64");
-        const decodedData = bufferObj.toString("utf8");
-        const jsonObj = JSON.parse(decodedData);
-
+        req.log.info({ body: req.body }, `Message consumed !`);
+        const { body: { message: { data } } } = req;
+        const jsonObj = formatMessageData(data);
         const result = await savePaymentInfo(jsonObj);
 
         res.status(200).json(success(res.statusCode, `MessageId: ${message.messageId} processed successfully`, result));
@@ -49,9 +49,9 @@ router.post('/consumer', async (req, res) => {
     }
 });
 
-router.get('/test', async(req, res) => {
+router.get('/test', async (req, res) => {
     try {
-        const response = await testMessage({name: "Akash Manoj"});
+        const response = await testMessage({ name: "Akash Manoj" });
         res.status(200).json(success(res.statusCode, `Test message is succesfull`, response));
     } catch (err) {
         return res.status(500).json(error(res.statusCode, err.message));

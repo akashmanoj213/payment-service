@@ -28,6 +28,14 @@ const publishMessage = async (data, topicName, attributes = {}) => {
     }
 }
 
+const formatMessageData = (data) => {
+    const bufferObj = Buffer.from(data, "base64");
+    const decodedData = bufferObj.toString("utf8");
+    const jsonObj = JSON.parse(decodedData);
+
+    return jsonObj;
+}
+
 const retrieveTraceId = (body) => {
     if (!body || !body.message) throw new Error("Invalid message format!");
 
@@ -38,5 +46,6 @@ const retrieveTraceId = (body) => {
 
 module.exports = {
     publishMessage,
-    retrieveTraceId
+    retrieveTraceId,
+    formatMessageData
 }

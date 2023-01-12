@@ -5,6 +5,8 @@ const { logger, LOGGING_TRACE_KEY } = require('../../utils/logger');
 const { setTraceId } = require("../../utils/traceId");
 const { retrieveTraceId } = require("../../utils/clients/pubSubClient")
 
+if(!config.has("projectId")) console.log("Please set projectId in config files");
+
 const PROJECT_ID = config.get("projectId");
 
 const traceLogger = (req, res, next) => {
@@ -81,7 +83,14 @@ const createResponse = (res, latencyMilliseconds) => {
 const extractTraceId = (req) => {
     let traceId;
     try {
-        traceId = req.headers['trace-id'] ? req.headers['trace-id'] : retrieveTraceId(req.body);
+        if(req.headers['trace-id']) {
+            traceId = req.headers['trace-id']
+        } else if(req.body && req.body.message) {
+            traceId = retrieveTraceId(req.body);
+        } else {
+            traceId = uuid.v4();
+            logger.info("TraceId not found. Using new traceId:", traceId);
+        }
     } catch (err) {
         traceId = uuid.v4();
         logger.error(err, `Error occured while retrieving traceId. Using new traceId: ${traceId}`);
