@@ -1,4 +1,5 @@
 {
     "paymentTopic":"projects/pruinhlth-nprd-dev-scxlyx-7250/topics/payment-completion",
+    "notificationTopic":"projects/pruinhlth-nprd-dev-scxlyx-7250/topics/process-notification",
     "projectId":"pruinhlth-nprd-dev-scxlyx-7250"
 }

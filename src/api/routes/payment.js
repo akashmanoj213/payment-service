@@ -1,6 +1,6 @@
 const express = require('express');
 const { success, error } = require('./util');
-const { inititateTransaction, pushMessage, savePaymentInfo, testMessage } = require("../../controllers/payment");
+const { inititateTransaction, publishPaymentComplete, savePaymentInfo, publishNotification } = require("../../controllers/payment");
 const { formatMessageData } = require('../../utils/clients/pubSubClient')
 
 const router = express.Router();
@@ -23,7 +23,8 @@ router.post('/webhook', async (req, res) => {
     req.log.info({ body }, `webhook pinged !`);
 
     try {
-        const messageId = await pushMessage(body);
+        const messageId = await publishPaymentComplete(body);
+        await publishNotification(body);
         res.status(200).json(success(res.statusCode, "Webhook ping succesfull!", { messageId }));
     } catch (err) {
         req.log.error(err, 'Error occured in /webhook :');
@@ -48,14 +49,5 @@ router.post('/consumer', async (req, res) => {
         return res.status(500).json(error(res.statusCode, err.message));
     }
 });
-
-router.get('/test', async (req, res) => {
-    try {
-        const response = await testMessage({ name: "Akash Manoj" });
-        res.status(200).json(success(res.statusCode, `Test message is succesfull`, response));
-    } catch (err) {
-        return res.status(500).json(error(res.statusCode, err.message));
-    }
-})
 
 module.exports = router;

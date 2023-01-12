@@ -1,16 +1,15 @@
 const config = require('config');
 const paytmChecksum = require('paytmchecksum');
-const { publishMessage } = require('../utils/clients/pubSubClient');
-const { models } = require('../utils/database');
-const { post } = require('../utils/clients/axiosClient');
-
 const moment = require('moment');
+const { publishMessage } = require('../utils/clients/pubSubClient');
+const { post } = require('../utils/clients/axiosClient');
 const { logger } = require('../utils/logger');
 const { savePaymentDetails } = require('../services/paymentService');
 
 const PAYTM_MERCHENT_KEY = config.get("paytmMerchantKey");
 const PAYTM_MERCHENT_ID = config.get("paytmMerchantId");
 const PAYMENT_TOPIC = config.get("paymentTopic");
+const NOTIFICATION_TOPIC = config.get("notificationTopic");
 
 const inititateTransaction = async (orderId, amount, customerId, customerPhoneNumber = null) => {
     let userInfo = { custId: customerId };
@@ -69,11 +68,11 @@ const inititateTransaction = async (orderId, amount, customerId, customerPhoneNu
     }
 }
 
-const pushMessage = async (body) => {
+const publishPaymentComplete = async (body) => {
     try {
-        logger.info("Publishing message...");
+        logger.info("Publishing message to payment-complete topic...");
 
-        const messageId = await publishMessage(body, PAYMENT_TOPIC)
+        const messageId = await publishMessage(body, PAYMENT_TOPIC);
 
         return messageId;
     } catch (err) {
@@ -111,15 +110,26 @@ const savePaymentInfo = async (data) => {
     }
 }
 
-const testMessage = async (body) => {
+const publishNotification = async (body) => {
     try {
-        logger.info("Publishing message...");
+        logger.info("Publishing message to notification topic...");
 
-        const messageId = await publishMessage(body, PAYMENT_TOPIC)
+        const attributes = {
+            type: 'SMS'
+        }
+
+        //TO-DO: replace with code to retrive phone Number from user-management service
+        const { TXNAMOUNT: txnAmount } = body;
+        const messageBody = {
+            body: `Payment completed for amount: ${txnAmount}`,
+            receiverNumber: '+9972976940'
+        }
+
+        const messageId = await publishMessage(messageBody, NOTIFICATION_TOPIC, attributes);
 
         return messageId;
     } catch (err) {
-        logger.error(err, "Error occured while publishing message!");
+        logger.error(err, "Error occured while publishing message to notification topic!");
         throw err;
     }
 }
@@ -131,7 +141,7 @@ const checkSum = async (body, key) => {
 
 module.exports = {
     inititateTransaction,
-    pushMessage,
+    publishPaymentComplete,
     savePaymentInfo,
-    testMessage
+    publishNotification
 }
