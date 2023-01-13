@@ -15,15 +15,19 @@ const loggerMiddleware = (req, res, next) => {
     setTraceId(traceId);
     const trace = `projects/${PROJECT_ID}/traces/${traceId}`;
 
-    req.log = logger.child({[LOGGING_TRACE_KEY]: trace})
+    const requestDetails = createRequest(req);
+    let httpRequest = { ...requestDetails };
+    logger.info({ httpRequest, [LOGGING_TRACE_KEY]: trace });
+
+    req.log = logger.child({[LOGGING_TRACE_KEY]: trace});
 
     res.on("finish", () => {
         const latencyMilliseconds = Date.now() - requestStartMs;
-        const requestDetails = createRequest(req);
+        
         const responseDetails = createResponse(res, latencyMilliseconds);
         // const spanId = crypto.randomBytes(8).toString("hex");
 
-        const httpRequest = { ...requestDetails, ...responseDetails };
+        httpRequest = { ...responseDetails };
         logger.info({ httpRequest, [LOGGING_TRACE_KEY]: trace });
     });
     next();
@@ -81,7 +85,6 @@ const createResponse = (res, latencyMilliseconds) => {
 
 const extractTraceId = (req) => {
     let traceId;
-    logger.info({req: req}, "test log");
     
     try {
         if(req.headers['trace-id']) {

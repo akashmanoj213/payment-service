@@ -12,7 +12,7 @@ const { testConnection, createTables } = require('./utils/database');
 // testConnection();
 
 //Initialise DB table - create tables if not present
-createTables();
+// createTables();
 
 const port = parseInt(process.env.PORT) || 8080;
 
