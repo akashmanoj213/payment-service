@@ -11,11 +11,10 @@ const serviceName = process.env.SERVICE_NAME;
 
 const loggerMiddleware = (req, res, next) => {
     const requestStartMs = Date.now();
+    logger.info(`${serviceName}: Processing request... `);
+
     const traceId = extractTraceId(req);
-
     const trace = `projects/${PROJECT_ID}/traces/${traceId}`;
-    logger.info({[LOGGING_TRACE_KEY]: trace}, `${serviceName}: Processing request... `);
-
     setTraceId(traceId);
 
     req.log = logger.child({[LOGGING_TRACE_KEY]: trace});
