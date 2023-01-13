@@ -1,7 +1,10 @@
 const bunyan = require('bunyan');
 const { LoggingBunyan,  LOGGING_TRACE_KEY } = require('@google-cloud/logging-bunyan');
 
-const serviceName = process.env.SERVICE_NAME
+const serviceName = process.env.SERVICE_NAME;
+if(!serviceName) {
+    console.log("ERROR: Please set SERVICE_NAME ENV variable!")
+}
 
 // Creates a Bunyan Cloud Logging client
 const loggingBunyan = new LoggingBunyan({

@@ -7,27 +7,26 @@ const { setTraceId } = require("../../utils/traceId");
 if(!config.has("projectId")) console.log("Please set projectId in config files");
 
 const PROJECT_ID = config.get("projectId");
+const serviceName = process.env.SERVICE_NAME;
 
 const loggerMiddleware = (req, res, next) => {
     const requestStartMs = Date.now();
     const traceId = extractTraceId(req);
 
-    setTraceId(traceId);
     const trace = `projects/${PROJECT_ID}/traces/${traceId}`;
+    logger.info({[LOGGING_TRACE_KEY]: trace}, `${serviceName}: Processing request... `);
 
-    const requestDetails = createRequest(req);
-    let httpRequest = { ...requestDetails };
-    logger.info({ httpRequest, [LOGGING_TRACE_KEY]: trace });
+    setTraceId(traceId);
 
     req.log = logger.child({[LOGGING_TRACE_KEY]: trace});
 
     res.on("finish", () => {
         const latencyMilliseconds = Date.now() - requestStartMs;
-        
+        const requestDetails = createRequest(req);
         const responseDetails = createResponse(res, latencyMilliseconds);
         // const spanId = crypto.randomBytes(8).toString("hex");
 
-        httpRequest = { ...responseDetails };
+        const httpRequest = { ...requestDetails, ...responseDetails };
         logger.info({ httpRequest, [LOGGING_TRACE_KEY]: trace });
     });
     next();
