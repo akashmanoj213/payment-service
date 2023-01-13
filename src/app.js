@@ -7,11 +7,11 @@ const errorHandler = require('./api/middlewares/errorHandler');
 const app = express();
 
 //Application Middlewares
-app.use(loggerMiddleware);
-
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(loggerMiddleware);
 
 app.get('/', (req, res) => {
     res.status(200).send('Api is working properly!');
