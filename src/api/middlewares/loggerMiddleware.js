@@ -11,10 +11,15 @@ const serviceName = process.env.SERVICE_NAME;
 
 const loggerMiddleware = (req, res, next) => {
     const requestStartMs = Date.now();
-    logger.info(`${serviceName}: Processing request... `);
+    const {traceId, isNew} = extractTraceId(req);
 
-    const traceId = extractTraceId(req);
     const trace = `projects/${PROJECT_ID}/traces/${traceId}`;
+    logger.info({[LOGGING_TRACE_KEY]: trace}, `${serviceName}: Processing request... `);
+    if(isNew) {
+        logger.info({[LOGGING_TRACE_KEY]: trace}, `traceId not found in request. Generating new traceId: ${traceId}`);
+    }
+
+
     setTraceId(traceId);
 
     req.log = logger.child({[LOGGING_TRACE_KEY]: trace});
@@ -83,6 +88,7 @@ const createResponse = (res, latencyMilliseconds) => {
 
 const extractTraceId = (req) => {
     let traceId;
+    let isNew = false;
     
     try {
         if(req.headers['trace-id']) {
@@ -91,14 +97,17 @@ const extractTraceId = (req) => {
             traceId = req.body.message.attributes.traceId;
         } else {
             traceId = uuid.v4();
-            logger.info("TraceId not found. Using new traceId:", traceId);
+            isNew = true;
         }
     } catch (err) {
         traceId = uuid.v4();
-        logger.error(err, `Error occured while retrieving traceId. Using new traceId: ${traceId}`);
+        isNew = true;
     }
 
-    return traceId;
+    return {
+        traceId,
+        isNew
+    };
 }
 
 module.exports = loggerMiddleware;
