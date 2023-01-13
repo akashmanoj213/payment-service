@@ -81,9 +81,10 @@ const createResponse = (res, latencyMilliseconds) => {
 
 const extractTraceId = (req) => {
     let traceId;
+    logger.info({body: req.body}, "test");
     try {
         if(req.headers['trace-id']) {
-            traceId = req.headers['trace-id']
+            traceId = req.headers['trace-id'];
         } else if(req.body && req.body.message && req.body.message.attributes && req.body.message.attributes.traceId) {
             traceId = req.body.message.attributes.traceId;
         } else {
